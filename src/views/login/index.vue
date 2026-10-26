@@ -28,18 +28,18 @@
           <img v-if="picUrl" @click="getPicCode" :src="picUrl" alt="" />
         </div>
         <div class="form-item">
-          <input class="inp" placeholder="请输入短信验证码" type="text" />
+          <input class="inp" v-model="msgCode" placeholder="请输入短信验证码" type="text" />
           <button @click="getCode">{{second === totalSecond ? '获取验证码' : second+'秒后重新获取'}}</button>
         </div>
       </div>
 
-      <div class="login-btn">登录</div>
+      <div class="login-btn" @click="login">登录</div>
     </div>
   </div>
 </template>
 
 <script>
-import { getPicCode, getMsgCode } from '@/api/login'
+import { getPicCode, getMsgCode, codeLogin } from '@/api/login'
 import { Toast } from 'vant'
 export default {
   data () {
@@ -50,7 +50,8 @@ export default {
       picUrl: '', // 存储请求渲染的图片地址
       totalSecond: 5, // 总秒数
       second: 5, // 倒计时的秒数
-      timer: null // 定时器 id
+      timer: null, // 定时器 id
+      msgCode: '' // 短信验证码
     }
   },
   async created () {
@@ -73,7 +74,7 @@ export default {
       }
       if (!this.timer && this.second === this.totalSecond) {
         await getMsgCode(this.picCode, this.picKey, this.mobile)
-        this.$toast('发送成功，请注意查收')
+        this.$toast('短信发送成功，请注意查收')
         this.timer = setInterval(() => {
           this.second--
           if (this.second <= 0) {
@@ -83,6 +84,21 @@ export default {
           }
         }, 1000)
       }
+    },
+    async login () {
+      if (!this.validFn()) {
+        return
+      }
+      if (!/^\d{6}$/.test(this.msgCode)) {
+        this.$toast('请输入正确的手机验证码')
+        return
+      }
+      console.log('发送登录请求')
+      const res = await codeLogin(this.mobile, this.msgCode)
+      this.$store.commit('user/setUserInfo', res.data)
+      console.log(res)
+      this.$toast('登录成功')
+      this.$router.push('/')
     },
     // 校验输入框内容
     validFn () {
