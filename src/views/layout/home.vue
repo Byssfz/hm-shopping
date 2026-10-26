@@ -14,15 +14,16 @@
 
     <!-- 轮播图 -->
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item v-for="item in bannerList" :key=item.imgUrl>
-        <img :src="item.imgUrl" alt="">
+      <van-swipe-item v-for="item in bannerList" :key="item.imgUrl">
+        <img :src="item.imgUrl" alt="" />
       </van-swipe-item>
     </van-swipe>
 
     <!-- 导航 -->
     <van-grid column-num="5" icon-size="40">
       <van-grid-item
-        v-for="item in navList" :key="item.imgUrl"
+        v-for="item in navList"
+        :key="item.imgUrl"
         :icon="item.imgUrl"
         text="新品首发"
         @click="$router.push('/category')"
@@ -31,7 +32,7 @@
 
     <!-- 主会场 -->
     <div class="main">
-      <img src="@/assets/main.png" alt="">
+      <img src="@/assets/main.png" alt="" />
     </div>
 
     <!-- 猜你喜欢 -->
@@ -39,7 +40,11 @@
       <p class="guess-title">—— 猜你喜欢 ——</p>
 
       <div class="goods-list">
-        <GoodsItem v-for="item in proList" :key="item.goods_id" :item="item"></GoodsItem>
+        <GoodsItem
+          v-for="item in proList"
+          :key="item.goods_id"
+          :item="item"
+        ></GoodsItem>
       </div>
     </div>
   </div>
@@ -62,7 +67,9 @@ export default {
     }
   },
   async created () {
-    const { data: { pageData } } = await getHomeData()
+    const {
+      data: { pageData }
+    } = await getHomeData()
     this.bannerList = pageData.items[1].data
     this.navList = pageData.items[3].data
     this.proList = pageData.items[6].data
