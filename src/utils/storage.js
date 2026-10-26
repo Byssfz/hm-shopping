@@ -1,4 +1,5 @@
 const INFO_KEY = 'hm_shopping_info'
+const HISTORY_KEY = 'hm_history_list'
 
 export const getInfo = () => {
   const result = localStorage.getItem(INFO_KEY)
@@ -11,4 +12,13 @@ export const setInfo = (info) => {
 
 export const resmoveInfo = () => {
   localStorage.removeItem(INFO_KEY)
+}
+
+export const setHistoryList = (arr) => {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(arr))
+}
+
+export const getHistoryList = () => {
+  const result = localStorage.getItem(HISTORY_KEY)
+  return result ? JSON.parse(result) : []
 }
