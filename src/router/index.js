@@ -11,6 +11,7 @@ import Home from '@/views/layout/home'
 import Category from '@/views/layout/category'
 import Cart from '@/views/layout/cart'
 import User from '@/views/layout/user'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -51,6 +52,23 @@ const router = new VueRouter({
       component: MyOrder
     }
   ]
+})
+// 1. to  往哪里去， 到哪去的路由信息对象
+// 2. from 从哪里来， 从哪来的路由信息对象
+// 3. next() 是否放行
+// 如果next()调用，就是放行
+// next(路径) 拦截到某个路径页面
+const authUrl = ['/pay', '/myorder']
+router.beforeEach((to, from, next) => {
+  if (!authUrl.includes(to.path)) {
+    next()
+    return
+  }
+  if (!store.getters.token) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
