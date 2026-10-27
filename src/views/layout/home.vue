@@ -67,6 +67,9 @@ export default {
     }
   },
   async created () {
+    // 嵌套解构：先取 res.data，再取 data.pageData
+    // 注意 data: 是「重命名」而非「取子属性」，所以内层 {} 不能省略，
+    // 否则 const { data: pageData } = res 得到的 pageData 是整个 data 对象
     const {
       data: { pageData }
     } = await getHomeData()
