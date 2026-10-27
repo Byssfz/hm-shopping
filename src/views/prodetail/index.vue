@@ -76,7 +76,6 @@
       <div @click="addFn" class="btn-add">加入购物车</div>
       <div @click="buyFn" class="btn-buy">立刻购买</div>
     </div>
-
     <van-action-sheet v-model="showPannel" :title="mode === 'cart' ? '加入购物车' : '立刻购买'">
       <div class="product">
         <div class="product-title">
@@ -96,10 +95,10 @@
         </div>
         <div class="num-box">
           <span>数量</span>
-          数字框占位
+          <Count-box v-model="addCount"></Count-box>
         </div>
         <div class="showbtn" v-if="detail.stock_total>0">
-          <div class="btn" v-if="mode=='cart'">加入购物车</div>
+          <div class="btn" v-if="mode=='cart'" @click="addCart">加入购物车</div>
           <div class="btn now" v-else>立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
@@ -112,8 +111,12 @@
 <script>
 import { getProDetail, getProComments } from '@/api/product'
 import defaultImg from '@/assets/default-avatar.png'
+import CountBox from '@/components/CountBox.vue'
 export default {
   name: 'ProDetail',
+  components: {
+    CountBox
+  },
   data () {
     return {
       images: [],
@@ -123,7 +126,8 @@ export default {
       total: 0,
       defaultImg,
       showPannel: false, // 控制弹层的显示隐藏
-      mode: 'cart' // 标记弹层状态
+      mode: 'cart', // 标记弹层状态
+      addCount: 1
     }
   },
   computed: {
@@ -153,6 +157,27 @@ export default {
     buyFn () {
       this.mode = 'buyNow'
       this.showPannel = true
+    },
+    addCart () {
+      if (!this.$store.getters.token) {
+        this.$dialog.confirm({
+          title: '温馨提示',
+          message: '此时需要先登录才能继续操作哦',
+          confirmButtonText: '去登陆',
+          cancelButtonText: '再逛逛'
+        })
+          .then(() => {
+            console.log(this.$route)
+            this.$router.replace({
+              path: '/login',
+              query: {
+                backUrl: this.$route.fullPath
+              }
+            })
+          })
+          .catch(() => {})
+      }
+      console.log('正常请求')
     }
   },
   created () {
