@@ -37,18 +37,20 @@ export default {
       this.$emit('input', this.value + 1)
     },
     handleChange (e) {
-      // e.target 就是输入框 DOM，e.target.value 是用户输入的字符串
+      // e.target 是触发事件的 <input> DOM，e.target.value 是框里当前的字符串
       const num = +e.target.value // 一元加号转数字：'3' => 3，'abc' => NaN，'' => 0
 
-      // 非数字或小于 1 都属于非法输入，需要还原显示值
+      // 非数字（NaN）或小于 1 都属于非法输入，需要还原显示值
       if (isNaN(num) || num < 1) {
-        // 只改 DOM 是不够的：父组件 value 没变，Vue 不会重新渲染这个 input
-        // 所以要手动把 DOM 上的脏值改回去
+        // 这里没有 emit，父组件的 value 不会变，Vue 判断"数据没变化"就不会重渲染
+        // 也就是说 Vue 不会帮我们把脏值擦掉，只能手动重置这个 input 的显示内容
+        // 举例：value 为 1，用户输入 'abc'，这里就把输入框改回显示 1
         e.target.value = this.value
         return
       }
 
-      // 合法值交给父组件，父组件更新后通过 :value 回流到输入框
+      // 合法值通过 input 事件交给父组件，父组件 v-model 更新后
+      // 再通过 :value 把新值回流到输入框（一次完整的数据闭环）
       this.$emit('input', num)
     }
   }
